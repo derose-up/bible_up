@@ -1,0 +1,26 @@
+{
+  "name": "BibleUp - Conteúdos Bíblicos Educativos",
+  "short_name": "BibleUp",
+  "description": "Aplicativo web para professores, pais e líderes cristãos acessarem conteúdos bíblicos educativos",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#72008c",
+  "theme_color": "#72008c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "favicon.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "books", "lifestyle"],
+  "lang": "pt-BR"
+}
