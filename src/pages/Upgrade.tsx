@@ -1,25 +1,30 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Crown, 
   Check, 
-  X, 
   Star,
   Download,
   BookOpen,
-  PaintBucket,
-  Heart,
   Shield,
   Zap,
-  CreditCard
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import Card from '../components/UI/Card';
 import Button from '../components/UI/Button';
+import Comprar from '../components/Comprar';
+import { useNavigate } from 'react-router-dom';
 
 const Upgrade = () => {
   const { userData } = useAuth();
+  const navigate = useNavigate();
+
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('monthly');
+  const price = selectedPlan === 'monthly' ? 19.90 : 159.90;
+  const title = selectedPlan === 'monthly' ? 'Plano Mensal' : 'Plano Anual';
+  const quantity = 1;
+  const userEmail = userData?.email || '';
+  const planId = selectedPlan === 'monthly' ? 'mensal' : 'anual';
 
   const features = {
     free: [
@@ -75,12 +80,25 @@ const Upgrade = () => {
     }
   ];
 
-  const handleSubscribe = () => {
-    // TODO: Integrar com Mercado Pago
-    console.log('Iniciando processo de assinatura:', selectedPlan);
-  };
+  if (!userData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+        <Card className="p-8 text-center max-w-md">
+          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+            Usuário não autenticado
+          </h2>
+          <p className="mb-6 text-gray-700 dark:text-gray-300">
+            Por favor, faça login para acessar a página de upgrade.
+          </p>
+          <Button onClick={() => navigate('/login')}>
+            Ir para Login
+          </Button>
+        </Card>
+      </div>
+    );
+  }
 
-  if (userData?.status === 'premium') {
+  if (userData.status === 'premium') {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <Card className="p-8 text-center max-w-md">
@@ -91,8 +109,8 @@ const Upgrade = () => {
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             Aproveite todos os benefícios da sua assinatura premium.
           </p>
-          <Button onClick={() => window.history.back()}>
-            Voltar
+          <Button onClick={() => navigate('/')}>
+            Voltar para Home
           </Button>
         </Card>
       </div>
@@ -223,14 +241,13 @@ const Upgrade = () => {
                 ))}
               </ul>
 
-              <Button 
-                variant="primary" 
-                className="w-full bg-yellow-500 hover:bg-yellow-600"
-                onClick={handleSubscribe}
-                icon={CreditCard}
-              >
-                Assinar Agora
-              </Button>
+              <Comprar
+                planId={planId}
+                userEmail={userEmail}
+                title={title}
+                price={price}
+                quantity={quantity}
+              />
             </Card>
           </motion.div>
         </div>
@@ -368,15 +385,13 @@ const Upgrade = () => {
             <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-2xl mx-auto">
               Junte-se a milhares de educadores que já transformaram suas aulas com o BibleUp Premium.
             </p>
-            <Button 
-              variant="primary" 
-              size="lg"
-              className="bg-yellow-500 hover:bg-yellow-600"
-              onClick={handleSubscribe}
-              icon={Crown}
-            >
-              Assinar Premium Agora
-            </Button>
+            <Comprar
+              planId={planId}
+              userEmail={userEmail}
+              title={title}
+              price={price}
+              quantity={quantity}
+            />
           </Card>
         </div>
       </div>

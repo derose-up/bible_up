@@ -1,12 +1,12 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  fullscreen?: boolean; // ✅ Novo parâmetro
 }
 
-const LoadingSpinner = ({ size = 'md', className = '' }: LoadingSpinnerProps) => {
+const LoadingSpinner = ({ size = 'md', className = '', fullscreen = false }: LoadingSpinnerProps) => {
   const sizeClasses = {
     sm: 'w-4 h-4',
     md: 'w-8 h-8',
@@ -14,7 +14,9 @@ const LoadingSpinner = ({ size = 'md', className = '' }: LoadingSpinnerProps) =>
   };
 
   return (
-    <div className={`flex items-center justify-center ${className}`}>
+    <div
+      className={`flex items-center justify-center ${fullscreen ? 'h-screen' : ''} ${className}`}
+    >
       <motion.div
         className={`${sizeClasses[size]} border-2 border-purple-200 border-t-purple-600 rounded-full`}
         animate={{ rotate: 360 }}

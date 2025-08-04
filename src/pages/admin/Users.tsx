@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Users as UsersIcon, 
@@ -26,7 +26,7 @@ import LoadingSpinner from '../../components/UI/LoadingSpinner';
 import toast from 'react-hot-toast';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../../services/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 const Users = () => {
   const { userData } = useAuth();
@@ -39,25 +39,40 @@ const Users = () => {
   const [showModal, setShowModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
 
-  useEffect(() => {
-    const unsub = onSnapshot(collection(db, 'usuarios'), (snapshot) => {
-      const lista = snapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          uid: doc.id,
-          ...data,
-          dataCadastro: data.dataCadastro?.toDate?.() ?? new Date(),
-          ultimoAcesso: data.ultimoAcesso?.toDate?.() ?? new Date(),
-          atualizadoEm: data.atualizadoEm?.toDate?.() ?? new Date(),
-          updatedAt: data.updatedAt?.toDate?.() ?? new Date(),
-        };
-      });
-      setUsuarios(lista);
-      setLoading(false);
+ useEffect(() => {
+  const unsub = onSnapshot(collection(db, 'usuarios'), (snapshot) => {
+    const lista = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        uid: doc.id,
+        nome: data.nome || "",
+        email: data.email || "",
+        whatsapp: data.whatsapp || "",
+        igreja: data.igreja || "",
+        funcaoMinisterial: data.funcaoMinisterial || "",
+        status: data.status || "free",
+        isAdmin: data.isAdmin || false,
+        fotoPerfil: data.fotoPerfil || "",
+        preferenciasConteudo: data.preferenciasConteudo || [],
+        concordaReceberEmail: data.concordaReceberEmail || false,
+        concordaReceberWhatsapp: data.concordaReceberWhatsapp || false,
+        favoritadoPor: data.favoritadoPor || [],
+        dataCadastro: data.dataCadastro?.toDate?.() ?? new Date(),
+        ultimoAcesso: data.ultimoAcesso?.toDate?.() ?? new Date(),
+        atualizadoEm: data.atualizadoEm?.toDate?.() ?? new Date(),
+        updatedAt: data.updatedAt?.toDate?.() ?? new Date(),
+      } as Usuario;
     });
 
-    return () => unsub(); // limpa o listener
-  }, []);
+    console.log('Usuários carregados do Firestore:', lista); // <<<<< DEBUG AQUI
+
+    setUsuarios(lista);
+    setLoading(false);
+  });
+
+  return () => unsub();
+}, []);
+
 
   // Extrair lista de igrejas únicas para filtro
   const igrejasUnicas = Array.from(new Set(usuarios.map(u => u.igreja).filter(Boolean)));
@@ -122,16 +137,18 @@ const Users = () => {
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
-    
-    try {
-      // Simular exclusão
-      setUsuarios(prev => prev.filter(user => user.uid !== userId));
-      toast.success('Usuário excluído com sucesso');
-    } catch (error) {
-      toast.error('Erro ao excluir usuário');
-    }
-  };
+  if (!confirm('Tem certeza que deseja excluir este usuário?')) return;
+
+  try {
+    const userRef = doc(db, 'usuarios', userId);
+    await deleteDoc(userRef); // Remove do Firestore
+    setUsuarios(prev => prev.filter(user => user.uid !== userId)); // Atualiza estado local
+    toast.success('Usuário excluído com sucesso');
+  } catch (error) {
+    console.error(error);
+    toast.error('Erro ao excluir usuário');
+  }
+};
 
   if (!userData?.isAdmin) {
     return (
@@ -289,12 +306,13 @@ const Users = () => {
               <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredUsuarios.map((usuario, index) => (
                   <motion.tr
-                    key={usuario.uid}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800"
-                  >
+                      key={usuario.uid}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index < 20 ? index * 0.05 : 0 }}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-800"
+                    >
+
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         {usuario.fotoPerfil ? (
@@ -310,10 +328,12 @@ const Users = () => {
                         )}
                         <div>
                           <div className="text-sm font-medium text-gray-900 dark:text-white flex items-center">
-                            {usuario.nome}
-                            {usuario.isAdmin && (
-                              <Shield className="w-4 h-4 text-purple-600 ml-2" title="Administrador" />
-                            )}
+                            <span className="font-medium">{usuario.nome}</span>
+                              {usuario?.isAdmin && (
+                                <span title="Administrador">
+                                  <Shield className="w-4 h-4 text-purple-600 ml-2" />
+                                </span>
+                              )}
                           </div>
                           <div className="text-sm text-gray-500 dark:text-gray-400">
                             {usuario.funcaoMinisterial}
@@ -361,7 +381,7 @@ const Users = () => {
                      <div className="px-4 py-3 items-center space-x-1">
                         {/* Botão Visualizar */}
                         <Button
-                          variant="text-blue-600"
+                          variant="ghost"
                           size="sm"
                           title="Visualizar usuário"
                           onClick={() => {
@@ -392,25 +412,28 @@ const Users = () => {
 
                         {/* Botão Editar */}
                           <Button
-                            variant="text-green-600"
-                            title="Editar usuário"
-                            onClick={() => {
-                              setSelectedUser(usuario);
-                              setShowModal(true); 
-                            }}
-                          >
-                            <Edit className="inline-block w-5 h-5 text-green-600" />
-                          </Button>
+                          variant="ghost" // ✅ permitido
+                          className="text-green-600" // ✅ mantém a cor visual desejada
+                          title="Editar usuário"
+                          onClick={() => {
+                            setSelectedUser(usuario);
+                            setShowModal(true); 
+                          }}
+                        >
+                          <Edit className="inline-block w-5 h-5" />
+                        </Button>
                         
                         {/* Botão Excluir */}
                         <Button
-                          variant="text-red-600"
+                          variant="ghost" // ✅ permitido
                           size="sm"
+                          className="text-red-600" // ✅ mantém o visual
                           title="Excluir usuário"
                           onClick={() => handleDeleteUser(usuario.uid)}
                         >
-                          <Trash2 className="inline-block w-5 h-5 text-red-600" />
+                          <Trash2 className="inline-block w-5 h-5" />
                         </Button>
+
                       </div>
                     </td>
                   </motion.tr>
@@ -542,9 +565,8 @@ const Users = () => {
         
               {/* Botão de salvar alterações */}
               <Button
-                variant="default"
+                className="w-full bg-blue-600 text-white hover:bg-blue-700"
                 onClick={handleSaveUserData}
-                className="w-full"
               >
                 Salvar Alterações
               </Button>

@@ -214,6 +214,44 @@ Para preview da build:
 npm run preview
 ```
 
+## Deploy Firebase – Passo a passo
+Use quando quiser publicar uma nova versão (funções ou site)
+
+1. Gerar a build do site:
+```bash
+npm run build
+```
+
+2. Atualizar e compilar as funções Firebase:
+```bash
+Copiar
+Editar
+cd functions
+npm install
+npm run build
+```
+
+3. Voltar à raiz e publicar no Firebase:
+```bash
+firebase deploy
+```
+
+## 📂 Estrutura das funções Firebase
+
+functions/
+├── src/index.ts         # Código das funções
+├── lib/                 # Código compilado (gerado automaticamente)
+├── package.json         # Dependências
+└── tsconfig.json        # Configuração do TypeScript
+
+## 🧯 Em caso de erro
+Para ver os erros do Firebase:
+1. Acesse: https://console.firebase.google.com/
+
+2. Vá em "Functions" → "Logs"
+
+3. Veja o que deu erro (ex: userId inválido, claims, etc)
+
 ## 📄 Licença
 
 Este projeto é propriedade privada. Todos os direitos reservados.

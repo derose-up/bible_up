@@ -14,21 +14,24 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENTID,
 };
 
-// Initialize Firebase
+// ✅ Inicializa Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase services
+// ✅ Exporta apenas os serviços usados
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
+// ✅ Analytics carregado somente se suportado (evita erros em SSR e melhora bundle)
 let analytics: ReturnType<typeof getAnalytics> | null = null;
 
-isSupported().then((supported) => {
-  if (supported) {
-    analytics = getAnalytics(app);
-  }
-});
+isSupported()
+  .then((supported) => {
+    if (supported) {
+      analytics = getAnalytics(app);
+      console.log('✅ Firebase Analytics habilitado');
+    }
+  })
+  .catch((err) => console.warn('Analytics não suportado:', err));
 
 export { app, analytics, logEvent };
-export default app;

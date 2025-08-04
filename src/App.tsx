@@ -4,39 +4,40 @@ import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import PrivateRoute from './components/Layout/PrivateRoute';
 import Layout from './components/Layout';
+import { Suspense, lazy } from 'react';
+import LoadingSpinner from './components/UI/LoadingSpinner'; // Importa o spinner
 
-// Auth Pages
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import ForgotPassword from './pages/auth/ForgotPassword';
+// Lazy imports
+const Login = lazy(() => import('./pages/auth/Login'));
+const Register = lazy(() => import('./pages/auth/Register'));
+const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword'));
 
-// Main Pages
-import Home from './pages/Home';
-import Lessons from './pages/Lessons';
-import LessonDetail from './pages/LessonDetail';
-import Activities from './pages/Activities';
-import ActivityDetail from "./pages/ActivityDetail";
-import Favorites from './pages/Favorites';
-import Profile from './pages/Profile';
-import Upgrade from './pages/Upgrade';
-import Bonus from './pages/Bonus';
-import Testimonials from './pages/Testimonials';
-import AtividadePublica from "./pages/AtividadePublica";
-import Termos from './pages/Termos';
-import Privacidade from './pages/Privacidade';
-import Contato from './pages/Contato';
-import Licoes from "./pages/Licoes";
-import ModeloPadrao from "./pages/ModeloPadrao";
+const Home = lazy(() => import('./pages/Home'));
+const Lessons = lazy(() => import('./pages/Lessons'));
+const LessonDetail = lazy(() => import('./pages/LessonDetail'));
+const Activities = lazy(() => import('./pages/Activities'));
+const ActivityDetail = lazy(() => import('./pages/ActivityDetail'));
+const Favorites = lazy(() => import('./pages/Favorites'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Upgrade = lazy(() => import('./pages/Upgrade'));
+const Bonus = lazy(() => import('./pages/Bonus'));
+const Testimonials = lazy(() => import('./pages/Testimonials'));
+const AtividadePublica = lazy(() => import('./pages/AtividadePublica'));
+const Termos = lazy(() => import('./pages/Termos'));
+const Privacidade = lazy(() => import('./pages/Privacidade'));
+const Contato = lazy(() => import('./pages/Contato'));
+const Licoes = lazy(() => import('./pages/Licoes'));
+const ModeloPadrao = lazy(() => import('./pages/ModeloPadrao'));
+const Sucesso = lazy(() => import('./pages/Sucesso'));
 
-// Admin Pages
-import Dashboard from './pages/admin/Dashboard';
-import Users from './pages/admin/Users';
-import LessonsAdmin from './pages/admin/LessonsAdmin';
-import AddLesson from './pages/admin/AddLesson';
-import ActivitiesAdmin from './pages/admin/ActivitiesAdmin';
-import Logs from './pages/admin/Logs';
-import AddOrEditActivity from './pages/admin/AddOrEditActivity';
-
+// Admin
+const Dashboard = lazy(() => import('./pages/admin/Dashboard'));
+const Users = lazy(() => import('./pages/admin/Users'));
+const LessonsAdmin = lazy(() => import('./pages/admin/LessonsAdmin'));
+const AddLesson = lazy(() => import('./pages/admin/AddLesson'));
+const ActivitiesAdmin = lazy(() => import('./pages/admin/ActivitiesAdmin'));
+const Logs = lazy(() => import('./pages/admin/Logs'));
+const AddOrEditActivity = lazy(() => import('./pages/admin/AddOrEditActivity'));
 
 function App() {
   return (
@@ -44,51 +45,62 @@ function App() {
       <AuthProvider>
         <Router>
           <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/cadastro" element={<Register />} />
-              <Route path="/recuperar-senha" element={<ForgotPassword />} />
-              <Route path="/termos" element={<Termos />} />
-              <Route path="/privacidade" element={<Privacidade />} />
-              <Route path="/contato" element={<Contato />} />
-              <Route path="/licoes" element={<Licoes />} />
-              <Route path="/modelopadrao" element={<ModeloPadrao />} />
+            {/* Suspense com spinner centralizado */}
+            <Suspense
+              fallback={
+                <div className="flex items-center justify-center h-screen">
+                  <LoadingSpinner size="lg" className="text-purple-600" />
+                </div>
+              }
+            >
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/cadastro" element={<Register />} />
+                <Route path="/recuperar-senha" element={<ForgotPassword />} />
+                <Route path="/termos" element={<Termos />} />
+                <Route path="/privacidade" element={<Privacidade />} />
+                <Route path="/contato" element={<Contato />} />
+                <Route path="/licoes" element={<Licoes />} />
+                <Route path="/modelopadrao" element={<ModeloPadrao />} />
+                <Route path="/sucesso" element={<Sucesso />} />
 
-              {/* Private Routes agrupadas */}
-              <Route element={<PrivateRoute><Layout /></PrivateRoute>}>
-                <Route path="/home" element={<Home />} />
-                <Route path="/licoes/:categoria" element={<Lessons />} />
-                <Route path="/licao/:id" element={<LessonDetail />} />
-                <Route path="/atividades/:categoria" element={<Activities />} />
-                <Route path="/atividade/:id" element={<ActivityDetail />} />
-                <Route path="/atividade/:id" element={<AtividadePublica />} />
-                <Route path="/favoritos" element={<Favorites />} />
-                <Route path="/perfil" element={<Profile />} />
-                <Route path="/upgrade" element={<Upgrade />} />
-                <Route path="/bonus" element={<Bonus />} />
-                <Route path="/depoimentos" element={<Testimonials />} />
-              </Route>
 
-              {/* Admin Routes agrupadas */}
-              <Route element={<PrivateRoute requireAdmin><Layout /></PrivateRoute>}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/usuarios" element={<Users />} />
-                <Route path="/licoes-admin" element={<LessonsAdmin />} />
-                <Route path="/adicionar-licao" element={<AddLesson />} />
-                <Route path="/editar-licao/:id" element={<AddLesson />} />
-                <Route path="/atividades-admin" element={<ActivitiesAdmin />} />
-                <Route path="/nova-atividade" element={<AddOrEditActivity />} />
-                <Route path="/editar-atividade/:id" element={<AddOrEditActivity />} />
-                <Route path="/logs" element={<Logs />} />
-              </Route>
+                {/* Private Routes agrupadas */}
+                <Route element={<PrivateRoute><Layout /></PrivateRoute>}>
+                  <Route path="/home" element={<Home />} />
+                  <Route path="/licoes/:categoria" element={<Lessons />} />
+                  <Route path="/licao/:id" element={<LessonDetail />} />
+                  <Route path="/atividades/:categoria" element={<Activities />} />
+                  <Route path="/atividade/:id" element={<ActivityDetail />} />
+                  <Route path="/atividade/:id" element={<AtividadePublica />} />
+                  <Route path="/favoritos" element={<Favorites />} />
+                  <Route path="/perfil" element={<Profile />} />
+                  <Route path="/upgrade" element={<Upgrade />} />
+                  <Route path="/bonus" element={<Bonus />} />
+                  <Route path="/depoimentos" element={<Testimonials />} />
+                </Route>
 
-              {/* Redirect */}
-              <Route path="/" element={<Navigate to="/home" replace />} />
-              {/* Catch all */}
-              <Route path="*" element={<Navigate to="/home" replace />} />
-            </Routes>
+                {/* Admin Routes agrupadas */}
+                <Route element={<PrivateRoute requireAdmin><Layout /></PrivateRoute>}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/usuarios" element={<Users />} />
+                  <Route path="/licoes-admin" element={<LessonsAdmin />} />
+                  <Route path="/adicionar-licao" element={<AddLesson />} />
+                  <Route path="/editar-licao/:id" element={<AddLesson />} />
+                  <Route path="/atividades-admin" element={<ActivitiesAdmin />} />
+                  <Route path="/nova-atividade" element={<AddOrEditActivity />} />
+                  <Route path="/editar-atividade/:id" element={<AddOrEditActivity />} />
+                  <Route path="/logs" element={<Logs />} />
+                </Route>
 
+                {/* Redirect */}
+                <Route path="/" element={<Navigate to="/home" replace />} />
+                <Route path="*" element={<Navigate to="/home" replace />} />
+              </Routes>
+            </Suspense>
+
+            {/* Toaster para notificações */}
             <Toaster
               position="top-right"
               toastOptions={{
