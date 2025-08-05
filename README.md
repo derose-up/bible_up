@@ -1,6 +1,6 @@
 # BibleUp - Aplicativo Web para Conteúdos Bíblicos Educativos
 
-BibleUp é um aplicativo web responsivo desenvolvido para professores, pais e líderes cristãos, oferecendo acesso a lições bíblicas, atividades educativas, materiais bônus e muito mais..
+BibleUp é um aplicativo web responsivo desenvolvido para professores, pais e líderes cristãos, oferecendo acesso a lições bíblicas, atividades educativas, materiais bônus e muito mais...
 
 ## 🌟 Características Principais
 
