@@ -258,4 +258,4 @@ Este projeto é propriedade privada. Todos os direitos reservados.
 
 ## 👥 Contribuição
 
-Este é um projeto privado. Para contribuições, entre em contato com a equipe de desenvolvimento.
+Este é um projeto privado. Para contribuições, entre em contato com a equipe de desenvolvimento..
