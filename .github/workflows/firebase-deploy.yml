@@ -1,4 +1,4 @@
-name: bible-up
+name: escola-biblica-admin
 
 on:
   push:
@@ -28,6 +28,6 @@ jobs:
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          firebaseToken: ${{ secrets.FIREBASE_TOKEN }}
           channelId: live
           projectId: bible-up
