@@ -1,4 +1,4 @@
-name: escola-biblica-admin
+name: Deploy BibleUp Firebase Hosting
 
 on:
   push:
