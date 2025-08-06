@@ -31,5 +31,11 @@ jobs:
           npm run build
           cd ..
 
+      - name: 🔧 Instalar Firebase CLI
+        run: |
+          npm install -g firebase-tools
+          echo "$(npm bin -g)" >> $GITHUB_PATH
+
       - name: 🚀 Deploy para Firebase
         run: firebase deploy --project escola-biblica-admin --token "${{ secrets.FIREBASE_TOKEN }}"
+
