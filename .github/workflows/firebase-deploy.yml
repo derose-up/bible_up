@@ -24,6 +24,12 @@ jobs:
       - name: 🛠️ Build do frontend
         run: npm run build
 
+      - name: 🔎 Verificar arquivos na raiz
+        run: ls -la
+
+      - name: 🔎 Verificar conteúdo da pasta dist
+        run: ls -la dist
+
       - name: 📦 Instalar dependências das funções
         run: |
           cd functions
@@ -38,4 +44,3 @@ jobs:
 
       - name: 🚀 Deploy para Firebase
         run: firebase deploy --project escola-biblica-admin --token "${{ secrets.FIREBASE_TOKEN }}"
-
