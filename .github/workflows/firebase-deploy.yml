@@ -1,4 +1,4 @@
-name: Deploy BibleUp Firebase Hosting
+name: Deploy Firebase Hosting and Functions
 
 on:
   push:
@@ -10,22 +10,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: 📥 Checkout do código
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install dependencies
+      - name: 📦 Instalar dependências do projeto principal
         run: npm install
 
-      - name: Build project
+      - name: 🛠️ Build do frontend
         run: npm run build
 
-      - name: Install Firebase CLI
-        run: npm install -g firebase-tools
+      - name: 📦 Instalar dependências das funções
+        run: |
+          cd functions
+          npm install
+          npm run build
+          cd ..
 
-      - name: Deploy to Firebase Hosting
+      - name: 🚀 Deploy para Firebase
         run: firebase deploy --project escola-biblica-admin --token "${{ secrets.FIREBASE_TOKEN }}"
